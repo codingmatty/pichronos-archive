@@ -1,5 +1,6 @@
 const { CronJob } = require("cron");
 const express = require("express");
+const moment = require("moment");
 const bodyParser = require("body-parser");
 const http = require("http");
 const socketIo = require("socket.io");
@@ -20,7 +21,7 @@ io.on("connection", socket => {
   console.log("New client connected");
 
   new CronJob(
-    "00 08 16 * * *",
+    moment().add(1, 'm').startOf('m').toDate(),
     () => socket.emit("Alarm Fired", Date.now()),
     null,
     true,
