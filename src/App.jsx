@@ -1,25 +1,24 @@
-import moment from "moment";
-import socketIOClient from "socket.io-client";
-import React, { Component, Fragment } from "react";
+import socketIOClient from 'socket.io-client';
+import React, { Component, Fragment } from 'react';
 
-import { endpoint } from "./constants.json";
-import TimeDisplay from "./components/TimeDisplay";
-import AlarmDisplay from "./components/AlarmDisplay";
+import { endpoint } from './constants.json';
+import TimeDisplay from './components/TimeDisplay';
+import AlarmDisplay from './components/AlarmDisplay';
 
 class App extends Component {
   constructor() {
     super();
     this.state = {
-      time: moment(),
+      time: Date.now(),
       alarm: false
     };
   }
 
   componentDidMount() {
     const socket = socketIOClient(endpoint);
-    socket.on("Alarm Fired", alarm => this.setState({ alarm: moment(alarm) }));
+    socket.on('Alarm Fired', alarm => this.setState({ alarm }));
 
-    setInterval(() => this.setState({ time: moment() }), 1000);
+    setInterval(() => this.setState({ time: Date.now() }), 1000);
   }
 
   render() {

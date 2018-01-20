@@ -5,6 +5,7 @@ const http = require('http');
 const moment = require('moment');
 const path = require('path');
 const socketIo = require('socket.io');
+const omit = require('lodash/omit');
 
 const routes = require('./routes');
 
@@ -23,23 +24,33 @@ console.log('Express Setup');
 
 const server = http.createServer(app);
 
+const connectedSockets = {};
+
 const io = socketIo(server);
 
 io.on('connection', (socket) => {
-  console.log('New client connected');
+  console.log(`New client connected [${socket.id}]`);
 
-  new CronJob(
-    moment()
-      .add(1, 'm')
-      .startOf('m')
-      .toDate(),
-    () => socket.emit('Alarm Fired', Date.now()),
-    null,
-    true,
-    'America/Chicago'
-  );
+  connectedSockets[socket.id] = socket;
 
-  socket.on('disconnect', () => console.log('Client disconnected'));
+  socket.on('disconnect', () => {
+    console.log(`Client disconnected [${socket.id}]`);
+
+    delete connectedSockets[socket.id];
+  });
 });
+
+new CronJob(
+  '0,15,30,45 * * * * *',
+  (...args) => {
+    console.log(...args);
+    Object.values(connectedSockets).forEach((socket) =>
+      socket.emit('Alarm Fired', Date.now())
+    );
+  },
+  null,
+  true,
+  'America/Chicago'
+);
 
 server.listen(port, () => console.log(`Listening on port ${port}`));

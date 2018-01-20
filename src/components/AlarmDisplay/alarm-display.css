@@ -1,0 +1,40 @@
+.alarm-display__overlay {
+  display: flex;
+  background-color: rgba(200, 200, 200, 0.5);
+  position: fixed;
+  top: 0px;
+  left: 0px;
+  right: 0px;
+  bottom: 0px;
+}
+
+.alarm-display {
+  margin: auto;
+  background-color: #323232;
+  color: white;
+  padding: 12px 24px;
+  border-radius: 6px;
+  outline: none;
+}
+
+.alarm-display__title {
+  font-size: 50px;
+}
+
+.alarm-display__content {
+  font-size: 100px;
+}
+
+.alarm-display__footer {
+  display: flex;
+  justify-content: space-around;
+}
+
+.alarm-display__action {
+  width: 100%;
+  padding: 12px;
+  font-size: 30px;
+  border: none;
+  background-color: transparent;
+  color: white;
+}

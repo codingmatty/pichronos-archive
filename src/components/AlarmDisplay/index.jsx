@@ -1,13 +1,10 @@
-import autobind from "react-autobind";
-import React, { Component } from "react";
-import Button from "material-ui/Button";
-import Dialog, {
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle
-} from "material-ui/Dialog";
-import Typography from 'material-ui/Typography';
+import moment from 'moment';
+import autobind from 'react-autobind';
+import React, { Component } from 'react';
+import Modal from 'react-modal';
+
+import './alarm-display.css';
+import Button from '../Button';
 
 export default class AlarmDisplay extends Component {
   state = {
@@ -18,6 +15,12 @@ export default class AlarmDisplay extends Component {
   constructor(props) {
     super(props);
     autobind(this);
+  }
+
+  componentWillReceiveProps(newProps) {
+    if (!this.props.alarm || this.props.alarm !== newProps.alarm) {
+      this.setState({ open: true, dismissed: false });
+    }
   }
 
   handleSnooze() {
@@ -39,22 +42,32 @@ export default class AlarmDisplay extends Component {
     }
 
     return (
-      <Dialog open={open}>
-        <DialogTitle>Alarm</DialogTitle>
-        <DialogContent>
-          <DialogContentText>
-          <Typography type="display4">{alarm.format("hh:mm A")}</Typography>
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={this.handleDismiss}>
+      <Modal
+        isOpen={open}
+        overlayClassName="alarm-display__overlay"
+        className="alarm-display"
+        contentLabel="Alarm Display"
+      >
+        <div className="alarm-display__title">Alarm</div>
+        <div className="alarm-display__content">
+          {moment(alarm).format('hh:mm A')}
+        </div>
+        <div className="alarm-display__footer">
+          <Button
+            className="alarm-display__action"
+            onClick={this.handleDismiss}
+          >
             Dismiss
           </Button>
-          <Button onClick={this.handleSnooze} color="primary">
+          <Button
+            className="alarm-display__action"
+            onClick={this.handleSnooze}
+            color="primary"
+          >
             Snooze
           </Button>
-        </DialogActions>
-      </Dialog>
+        </div>
+      </Modal>
     );
   }
 }
