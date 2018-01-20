@@ -6,7 +6,11 @@ const db = require('../db');
 const router = express.Router();
 
 router.get('/', (req, res) => {
-  res.sendFile(path.join('build', 'index.html'));
+  res.sendFile(
+    path.resolve(
+      path.join(require.main.filename, '..', '..', 'build', 'index.html')
+    )
+  );
 });
 
 router.get('/ping', function(req, res) {

@@ -11,7 +11,11 @@ const routes = require('./routes');
 const port = process.env.PORT || 4001;
 const app = express();
 
-app.use(express.static(path.join('build')));
+app.use(
+  express.static(
+    path.resolve(path.join(require.main.filename, '..', '..', 'build'))
+  )
+);
 app.use(bodyParser.json());
 app.use(routes);
 
