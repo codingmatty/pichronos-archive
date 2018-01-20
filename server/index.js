@@ -19,6 +19,8 @@ app.use(
 app.use(bodyParser.json());
 app.use(routes);
 
+console.log('Express Setup');
+
 const server = http.createServer(app);
 
 const io = socketIo(server);

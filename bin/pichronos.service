@@ -2,7 +2,7 @@
 Description=PiChronos
 
 [Service]
-ExecStart=/home/pi/pichronos/start.js
+ExecStart=/home/pi/pichronos/bin/start.js
 Restart=always
 User=nobody
 Group=nogroup  
