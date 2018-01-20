@@ -20,13 +20,13 @@ async function initializeConfig() {
 
 initializeConfig();
 
-exports.getConfig = async function() {
+exports.getConfig = async function getConfig() {
   const savedConfig = await db.get('config');
 
   return JSON.parse(savedConfig);
 };
 
-exports.updateConfig = async function(newConfig) {
+exports.updateConfig = async function updateConfig(newConfig) {
   const savedConfig = await db.get('config');
   const configUpdate = Object.assign({}, JSON.parse(savedConfig), newConfig);
 

@@ -1,6 +1,7 @@
 import socketIOClient from 'socket.io-client';
 import React, { Component, Fragment } from 'react';
 
+import { ALARM_ACTIVATED } from './config/socket-events';
 import { endpoint } from './constants.json';
 import TimeDisplay from './components/TimeDisplay';
 import AlarmDisplay from './components/AlarmDisplay';
@@ -16,7 +17,7 @@ class App extends Component {
 
   componentDidMount() {
     const socket = socketIOClient(endpoint);
-    socket.on('Alarm Fired', alarm => this.setState({ alarm }));
+    socket.on(ALARM_ACTIVATED, (alarm) => this.setState({ alarm }));
 
     setInterval(() => this.setState({ time: Date.now() }), 1000);
   }

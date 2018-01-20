@@ -3,8 +3,9 @@ import autobind from 'react-autobind';
 import React, { Component } from 'react';
 import Modal from 'react-modal';
 
-import './alarm-display.css';
+import { DEFAULT_SNOOZE } from '../../config/defaults';
 import Button from '../Button';
+import './alarm-display.css';
 
 export default class AlarmDisplay extends Component {
   state = {
@@ -18,14 +19,16 @@ export default class AlarmDisplay extends Component {
   }
 
   componentWillReceiveProps(newProps) {
-    if (!this.props.alarm || this.props.alarm !== newProps.alarm) {
+    if (!this.props.alarm || this.props.alarm.time !== newProps.alarm.time) {
       this.setState({ open: true, dismissed: false });
     }
   }
 
   handleSnooze() {
+    const { snooze = DEFAULT_SNOOZE } = this.props.alarm;
+
     this.setState({ open: false }, () => {
-      setTimeout(() => this.setState({ open: true }), 1000);
+      setTimeout(() => this.setState({ open: true }), snooze);
     });
   }
 
@@ -36,6 +39,8 @@ export default class AlarmDisplay extends Component {
   render() {
     const { alarm } = this.props;
     const { open, dismissed } = this.state;
+
+    const { time, title } = alarm;
 
     if (dismissed) {
       return null;
@@ -48,9 +53,9 @@ export default class AlarmDisplay extends Component {
         className="alarm-display"
         contentLabel="Alarm Display"
       >
-        <div className="alarm-display__title">Alarm</div>
+        <div className="alarm-display__title">{title || 'Alarm'}</div>
         <div className="alarm-display__content">
-          {moment(alarm).format('hh:mm A')}
+          {moment(time).format('hh:mm A')}
         </div>
         <div className="alarm-display__footer">
           <Button
