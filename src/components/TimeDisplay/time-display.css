@@ -1,5 +1,9 @@
 .time-display {
-  width: fit-content;
   margin: auto;
   align-self: center;
+  font-size: 100px;
+  background-color: rgba(0, 0, 0, 0.5);
+  color: white;
+  padding: 12px 24px;
+  border-radius: 6px;
 }
