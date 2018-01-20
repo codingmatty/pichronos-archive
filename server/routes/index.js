@@ -1,13 +1,19 @@
-const express = require("express");
-const db = require("../db");
+const express = require('express');
+const path = require('path');
+
+const db = require('../db');
 
 const router = express.Router();
 
-router.get("/", (req, res) => {
-  res.send({ response: "I am alive" }).status(200);
+router.get('/', (req, res) => {
+  res.sendFile(path.join('build', 'index.html'));
 });
 
-router.get("/config", async (req, res) => {
+router.get('/ping', function(req, res) {
+  res.send('pong');
+});
+
+router.get('/config', async (req, res) => {
   try {
     const config = await db.getConfig();
     res.status(200).send({ config });
@@ -16,7 +22,7 @@ router.get("/config", async (req, res) => {
   }
 });
 
-router.put("/config", async (req, res) => {
+router.put('/config', async (req, res) => {
   const { config } = req.body;
 
   try {
