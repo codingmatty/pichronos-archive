@@ -4,6 +4,9 @@ const http = require('http');
 const path = require('path');
 const socketIo = require('socket.io');
 
+process.env.PICHRONOS_ROOT_DIR =
+  process.env.PICHRONOS_ROOT_DIR || path.resolve();
+
 const alarmHandler = require('./alarm-handler');
 const routes = require('./routes');
 
