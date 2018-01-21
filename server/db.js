@@ -2,48 +2,51 @@ const low = require('lowdb');
 const path = require('path');
 const FileSync = require('lowdb/adapters/FileSync');
 
-const adapter = new FileSync(
-  path.join(process.env.PICHRONOS_ROOT_DIR, 'db.json')
-);
+class Database {
+  constructor(file) {
+    const adapter = new FileSync(file);
 
-const db = low(adapter);
+    this.db = low(adapter);
+    this.db
+      .defaults({
+        config: {
+          alarms: [],
+          timezone: 'America/Chicago',
+          delta: 0
+        }
+      })
+      .write();
+  }
 
-db
-  .defaults({
-    config: {
-      alarms: [],
-      timezone: 'America/Chicago',
-      delta: 0
-    }
-  })
-  .write();
+  getConfig() {
+    return this.db.get('config').value();
+  }
 
-exports.getConfig = function getConfig() {
-  return db.get('config').value();
-};
+  getAlarms() {
+    return this.db.get('config.alarms').value();
+  }
 
-exports.getAlarms = function getAlarms() {
-  return db.get('config.alarms').value();
-};
+  addAlarm(alarm) {
+    return this.db
+      .get('config.alarms')
+      .push({ ...alarm, id: Date.now().toString(32) })
+      .write();
+  }
 
-exports.addAlarm = function addAlarm(alarm) {
-  return db
-    .get('config.alarms')
-    .push({ ...alarm, id: Date.now().toString(32) })
-    .write();
-};
+  updateAlarm(alarmId, alarm) {
+    return this.db
+      .get('config.alarms')
+      .find({ id: alarmId })
+      .assign({ ...alarm, id: alarmId })
+      .write();
+  }
 
-exports.updateAlarm = function updateAlarm(alarmId, alarm) {
-  return db
-    .get('config.alarms')
-    .find({ id: alarmId })
-    .assign({ ...alarm, id: alarmId })
-    .write();
-};
+  removeAlarm(alarmId) {
+    return this.db
+      .get('config.alarms')
+      .remove({ id: alarmId })
+      .write();
+  }
+}
 
-exports.removeAlarm = function removeAlarm(alarmId) {
-  return db
-    .get('config.alarms')
-    .remove({ id: alarmId })
-    .write();
-};
+module.exports = Database;

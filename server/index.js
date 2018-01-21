@@ -2,39 +2,37 @@ const bodyParser = require('body-parser');
 const express = require('express');
 const http = require('http');
 const path = require('path');
-const socketIo = require('socket.io');
 
-process.env.PICHRONOS_ROOT_DIR =
-  process.env.PICHRONOS_ROOT_DIR || path.resolve();
+const Database = require('./db');
+const AlarmHandler = require('./alarm-handler');
+const SocketHandler = require('./socket-handler');
+const Router = require('./router');
 
-const alarmHandler = require('./alarm-handler');
-const routes = require('./routes');
-
+// Constants
 const port = process.env.PORT || 4001;
+const rootDir = process.env.PICHRONOS_ROOT_DIR || path.resolve();
+
+// Files
+const dbFile = path.join(rootDir, 'db.json');
+const indexFile = path.join(rootDir, 'build', 'index.html');
+const staticDir = path.join(rootDir, 'build');
+
+// Instances
+const database = new Database(dbFile);
+const router = new Router(database, indexFile);
+
 const app = express();
 
-app.use(express.static(path.join(process.env.PICHRONOS_ROOT_DIR, 'build')));
+app.use(express.static(staticDir));
 app.use(bodyParser.json());
-app.use(routes);
-
-console.log('Express Setup');
+app.use(router.router);
 
 const server = http.createServer(app);
 
-const io = socketIo(server);
-
-io.on('connection', (socket) => {
-  console.log(`New client connected [${socket.id}]`);
-
-  alarmHandler.registerSocket(socket);
-
-  socket.on('disconnect', () => {
-    console.log(`Client disconnected [${socket.id}]`);
-
-    alarmHandler.deregisterSocket(socket);
-  });
-});
-
+const socketHandler = new SocketHandler(server);
+const alarmHandler = new AlarmHandler(database, socketHandler);
 alarmHandler.loadAlarms();
+
+router.registerHandlers(alarmHandler);
 
 server.listen(port, () => console.log(`Listening on port ${port}`));
