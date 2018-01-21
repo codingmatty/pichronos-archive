@@ -1,7 +1,10 @@
 const low = require('lowdb');
+const path = require('path');
 const FileSync = require('lowdb/adapters/FileSync');
 
-const adapter = new FileSync('db.json');
+const adapter = new FileSync(
+  path.join(process.env.PICHRONOS_ROOT_DIR, 'db.json')
+);
 
 const db = low(adapter);
 

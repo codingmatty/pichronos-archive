@@ -8,9 +8,7 @@ const router = express.Router();
 
 router.get('/', (req, res) => {
   res.sendFile(
-    path.resolve(
-      path.join(require.main.filename, '..', '..', 'build', 'index.html')
-    )
+    path.join(process.env.PICHRONOS_ROOT_DIR, 'build', 'index.html')
   );
 });
 

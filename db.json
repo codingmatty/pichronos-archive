@@ -1,12 +1,6 @@
 {
   "config": {
-    "alarms": [
-      {
-        "id": "1c4ar9re0",
-        "title": "Constant Alarm",
-        "expression": "0 * * * * *"
-      }
-    ],
+    "alarms": [],
     "timezone": "America/Chicago",
     "delta": 0
   }
