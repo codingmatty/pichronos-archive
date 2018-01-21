@@ -1,40 +1,46 @@
-const level = require('level');
-const path = require('path');
+const low = require('lowdb');
+const FileSync = require('lowdb/adapters/FileSync');
 
-const db = level(
-  path.resolve(path.join(require.main.filename, '..', '..', 'db'))
-);
+const adapter = new FileSync('db.json');
 
-const { NotFoundError } = level;
+const db = low(adapter);
 
-async function initializeConfig() {
-  try {
-    const savedConfig = await db.get('config');
-  } catch (error) {
-    if (error.type == 'NotFoundError') {
-      await db.put('config', JSON.stringify({}));
-      console.log('Config Created!');
+db
+  .defaults({
+    config: {
+      alarms: [],
+      timezone: 'America/Chicago',
+      delta: 0
     }
-  }
-}
+  })
+  .write();
 
-initializeConfig();
-
-exports.getConfig = async function getConfig() {
-  const savedConfig = await db.get('config');
-
-  return JSON.parse(savedConfig);
+exports.getConfig = function getConfig() {
+  return db.get('config').value();
 };
 
-exports.updateConfig = async function updateConfig(newConfig) {
-  const savedConfig = await db.get('config');
-  const configUpdate = Object.assign({}, JSON.parse(savedConfig), newConfig);
+exports.getAlarms = function getAlarms() {
+  return db.get('config.alarms').value();
+};
 
-  try {
-    await db.put('config', JSON.stringify(configUpdate));
-    const updatedConfig = await db.get('config');
-    return JSON.parse(updatedConfig);
-  } catch (error) {
-    console.error(error);
-  }
+exports.addAlarm = function addAlarm(alarm) {
+  return db
+    .get('config.alarms')
+    .push({ ...alarm, id: Date.now().toString(32) })
+    .write();
+};
+
+exports.updateAlarm = function updateAlarm(alarmId, alarm) {
+  return db
+    .get('config.alarms')
+    .find({ id: alarmId })
+    .assign({ ...alarm, id: alarmId })
+    .write();
+};
+
+exports.removeAlarm = function removeAlarm(alarmId) {
+  return db
+    .get('config.alarms')
+    .remove({ id: alarmId })
+    .write();
 };
