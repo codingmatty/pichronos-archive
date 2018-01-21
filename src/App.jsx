@@ -4,12 +4,12 @@ import autobind from 'react-autobind';
 import Modal from 'react-modal';
 import socketIOClient from 'socket.io-client';
 
+import { ENDPOINT } from './config/defaults';
 import {
   ALARM_ACTIVATED,
   ALARM_SNOOZED,
   ALARM_DISMISSED
 } from './config/socket-events';
-import { endpoint } from './constants.json';
 import TimeDisplay from './components/TimeDisplay';
 import AlarmDisplay from './components/AlarmDisplay';
 
@@ -21,7 +21,7 @@ class App extends Component {
       time: Date.now(),
       alarm: false
     };
-    this.socket = socketIOClient(endpoint);
+    this.socket = socketIOClient(ENDPOINT);
   }
 
   componentDidMount() {
